@@ -53,7 +53,7 @@ if __name__ == "__main__":
 
     init()
 
-    st.header("🔌 Hunch Club Publish Platforms")
+    st.header("📬 Hunch Club Publish Platforms")
     
     # st.write("This is the tips page")
     

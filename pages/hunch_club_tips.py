@@ -84,7 +84,7 @@ if __name__ == "__main__":
 
     init()
 
-    st.header("🔌 Hunch Club Tips")
+    st.header("🎟️ Hunch Club Tips")
     
     tips = get_tips()
     
