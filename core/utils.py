@@ -22,7 +22,7 @@ def ping_server():
     try:
         response = requests.get(SERVER_ADDRESS + "/common/ping")
         if response.status_code != 200:
-            raise Exception("Server not available at " + SERVER_ADDRESS)
+            raise Exception("Server not available")
         return True
     except Exception as e:
         log.error(e)
@@ -47,7 +47,7 @@ def init():
         pass
         
     if not ping_server():
-        st.error("Server is Offline at " + SERVER_ADDRESS, icon="🚨")
+        st.error("Server is Offline", icon="🚨")
         ping_server.clear()
         st.stop()
     
@@ -60,7 +60,7 @@ def init():
     # If not authenticated, show login page
     if not super_admin_authenticated(): 
         # Show login page
-        st.success("Server is Online at " + SERVER_ADDRESS, icon="✅")
+        st.success("Server is Online", icon="✅")
         show_super_admin_login()
         st.stop()
 

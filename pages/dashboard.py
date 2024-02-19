@@ -1,5 +1,5 @@
 import streamlit as st
-from core.utils import init, SERVER_ADDRESS, server_request
+from core.utils import init, server_request
 from loguru import logger as log
 
 from core.vars import DEBUG
@@ -31,7 +31,7 @@ def dashboard():
     
     st.header("Dashboard")
 
-    st.success("Server is Online at " + SERVER_ADDRESS, icon="✅")
+    st.success("Server is Online", icon="✅")
     
     data = get_dashboard()
     

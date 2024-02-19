@@ -4,7 +4,7 @@ from loguru import logger as log
 from time import sleep
 from datetime import datetime
 from core.utils import init, server_request, to_snake_case, create_form_element, process_form_submission, merge_dicts, recursive_walk, encode_datetimes_for_db, filter_dict
-from core.vars import DEBUG, SERVER_ADDRESS
+from core.vars import DEBUG
 
 @st.cache_resource(ttl=60 if not DEBUG else 5)
 def get_platforms():

@@ -1,5 +1,5 @@
 import streamlit as st
-from core.utils import init, SERVER_ADDRESS, server_request, to_snake_case, create_form_element, process_form_submission, merge_dicts
+from core.utils import init, server_request, to_snake_case, create_form_element, process_form_submission, merge_dicts
 import requests
 from loguru import logger as log
 from datetime import datetime, timedelta
