@@ -6,9 +6,8 @@ streamlit==1.31.0
 # streamlit-qrcode-scanner
 # streamlit-option-menu
 # st-pages
-python-dotenv
 # numpy
-pydantic
+# pydantic
 requests
 # python-docx
 # AudioSegment

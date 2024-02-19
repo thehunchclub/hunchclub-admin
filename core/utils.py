@@ -1,5 +1,3 @@
-# from dotenv import load_dotenv
-# load_dotenv()
 import streamlit as st
 # from rich import print
 import datetime
@@ -8,7 +6,6 @@ import requests
 from time import sleep
 from loguru import logger as log
 from importlib import import_module
-from dotenv import load_dotenv
 import random
 
 # Custom imports
@@ -32,12 +29,7 @@ def ping_server():
     return False
 
 def init():
-    
-    load_dotenv(
-        os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), ".env"), 
-        override=True
-    )
-    
+        
     # Force remove default page navigation
     st.config.set_option('client.showSidebarNavigation', False)
     
