@@ -1,7 +1,7 @@
 # from dotenv import load_dotenv
 # load_dotenv()
 import streamlit as st
-from rich import print
+# from rich import print
 import datetime
 import os
 import requests
@@ -304,7 +304,7 @@ def encode_datetimes_for_db(value):
 
 def create_form_element(form, label=None, value=None, key=None, help=None, disabled=False, use_columns=False, show_label=True, options=[], field=None):
     
-    if 'time' in label: print(key, label,use_columns, show_label, type(value))
+    # if 'time' in label: print(key, label,use_columns, show_label, type(value))
     
     _label_visibility = 'visible' if label else 'collapsed'
     if not label: label = "-"

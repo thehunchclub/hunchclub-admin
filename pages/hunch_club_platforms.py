@@ -76,7 +76,7 @@ if __name__ == "__main__":
     if id in ids and form_data:
         # Form submitted
         
-        print("ACTION>>>>>>", action)
+        # print("ACTION>>>>>>", action)
         
         # INFO: This is a recursive function that encodes datetimes to ISO format for MongoDB, since we are using Motor, it does not encode correctly.
         recursive_walk(form_data, encode_datetimes_for_db) 
@@ -142,10 +142,10 @@ if __name__ == "__main__":
             # Add platform, and rerun
             # Remove helpful stuff from schema
             save_schema = filter_dict(default_schema, ["_help","_options","_field"], exclude=True)
-            print(save_schema)
+            # print(save_schema)
             try:
                 results = server_request("hunch_club/platform", method="POST", data=save_schema)
-                print("INSERT QUERY") 
+                # print("INSERT QUERY") 
                 if results.status_code != 200:
                     raise Exception("Error adding platform")
                 st.success(":white_check_mark: Platform added")
@@ -165,7 +165,7 @@ if __name__ == "__main__":
         for platform in platforms:
             _plat = {}
             for k in platform.keys():
-                print(k)
+                # print(k)
                 if k not in default_schema.keys():
                     continue
                 if k not in ['language', 'name', 'channel', 'active', 'max_tips', 'sort_by', 'sort_order', 'date_format', 'use_icons', 'next_publish' ]:
