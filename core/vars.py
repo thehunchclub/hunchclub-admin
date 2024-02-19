@@ -1,4 +1,5 @@
 import os
+import streamlit as st
 # Load dotenv
 from dotenv import load_dotenv
 load_dotenv(
@@ -6,7 +7,7 @@ load_dotenv(
     override=True
 )
 
-SERVER_ADDRESS = os.getenv("API_SERVER_ADDRESS").strip("/")
-DEBUG = os.getenv("DEBUG", "False").lower() == "true"
+SERVER_ADDRESS = st.secrets["API_SERVER_ADDRESS"].strip("/")
+DEBUG = str(st.secrets["DEBUG"]).lower() == "true"
 BASEPATH = os.getcwd() #os.path.dirname(os.path.abspath(__file__))
-API_TOKEN = os.getenv("API_TOKEN")
+API_TOKEN = st.secrets["API_TOKEN"]

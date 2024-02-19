@@ -166,7 +166,7 @@ def super_admin_authenticated(access_token=None):
     
     if _ac:
         
-        if _ac == os.getenv("APP_PASSWORD"):
+        if _ac == st.secrets["APP_PASSWORD"]:
             st.session_state['super_admin'] = True
             # st.session_state['access_token'] = _ac
             
