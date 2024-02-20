@@ -118,6 +118,28 @@ if __name__ == "__main__":
                 st.error("Error updating platform: " + str(e))
                 log.error(e)
         
+        if action == "duplicate":
+            # Duplicating item
+            try:
+                # Catch publish_schedule and convert to cron format
+                _schedule = form_data.get("publish_schedule", "")
+                _schedule = _schedule.split(":")
+                _schedule = f"{_schedule[1]} {_schedule[0]} * * *" if _schedule else ""
+                form_data['publish_schedule'] = _schedule
+                form_data['name'] = form_data['name'] + " (Copy)"
+                if 'next_publish' in form_data: # Remove this as it is defined on the server
+                    del form_data['next_publish']
+                results = server_request("hunch_club/platform", method="POST", data=form_data) 
+                # print("UPDATE QUERY", results.text)  
+                if not results.status_code == 200:
+                    raise Exception(results.text)
+                st.toast(":white_check_mark: Platform Duplicated")
+                get_platforms.clear()
+            except Exception as e:
+                st.error("Error duplicating platform: " + str(e))
+                log.error(e)
+
+        
         if action == 'test platform':
             # Send test
             result = server_request("hunch_club/platform/test", method="POST", data=form_data)
@@ -213,13 +235,15 @@ if __name__ == "__main__":
 
                     # c1,c2 = st.columns([1,1])
                     # with c1:
-                    cc1,cc2,cc3 = st.columns([1,1,1])
+                    cc1,cc2,cc3,cc4 = st.columns(4)
                     with cc1:
                         st.form_submit_button("Save", type="primary", use_container_width=True) 
                     with cc2:
                         st.form_submit_button("Delete", type="secondary", use_container_width=True)
                     with cc3:
-                        st.form_submit_button("Test Platform", type="secondary", use_container_width=True)
+                        st.form_submit_button("Duplicate", type="secondary", use_container_width=True)
+                    with cc4:
+                        st.form_submit_button("Test Platform", type="primary", use_container_width=True)
                     
                     st.divider()
 

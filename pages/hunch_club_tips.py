@@ -30,7 +30,7 @@ def get_tips():
 
 def update_tips(edited_rows:dict, dataset:dict):
     if edited_rows:
-        st.write(edited_rows)
+        # st.write(edited_rows)
         errors = []
         for index, row in edited_rows.items():
             # print(index, row, dataset[index])
@@ -47,6 +47,7 @@ def update_tips(edited_rows:dict, dataset:dict):
                 st.error(str(e))
             pass
         # st.session_state['edit_tips_1']['edited_rows'] = {}
+        st.balloons()
         get_tips.clear()
         if errors:
             st.error("\n".join(errors))
