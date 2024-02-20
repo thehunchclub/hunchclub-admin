@@ -90,7 +90,7 @@ if __name__ == "__main__":
                 # results = await hunchclub_mongodb.delete_by_id(id)
                 results = server_request(f"hunch_club/platform/{id}", method="DELETE")
                 if not results.status_code == 200:
-                    raise Exception("Error deleting platform")
+                    raise Exception(results.text)
                 log.info("Platform Deleted")
                 st.toast(":white_check_mark: Platform Deleted")
                 get_platforms.clear()
@@ -111,7 +111,7 @@ if __name__ == "__main__":
                 results = server_request(f"hunch_club/platform/{id}", method="PATCH", data=form_data)
                 # print("UPDATE QUERY", results.text)  
                 if not results.status_code == 200:
-                    raise Exception("Error updating platform")
+                    raise Exception(results.text)
                 st.toast(":white_check_mark: Platform Updated")
                 get_platforms.clear()
             except Exception as e:
@@ -169,7 +169,7 @@ if __name__ == "__main__":
                 results = server_request("hunch_club/platform", method="POST", data=save_schema)
                 # print("INSERT QUERY") 
                 if results.status_code != 200:
-                    raise Exception("Error adding platform")
+                    raise Exception(results.text)
                 st.success(":white_check_mark: Platform added")
                 get_platforms.clear()
                 sleep(1)
