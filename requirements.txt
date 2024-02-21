@@ -7,7 +7,7 @@ streamlit==1.31.0
 # streamlit-option-menu
 # st-pages
 # numpy
-# pydantic
+pydantic
 requests
 # python-docx
 # AudioSegment
