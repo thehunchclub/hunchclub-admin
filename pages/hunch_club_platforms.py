@@ -192,10 +192,11 @@ if __name__ == "__main__":
     # drop columns
     for platform in platforms:
         _plat = {}
-        for k in platform.keys():
+        # for k in platform.keys():
+        for k in default_schema.keys():
             # print(k)
-            if k not in default_schema.keys():
-                continue
+            # if k not in default_schema.keys():
+            #     continue
             if k not in [
                     'language', 
                     'name', 
@@ -270,7 +271,11 @@ if __name__ == "__main__":
                 "sort_by": st.column_config.SelectboxColumn("Sort by", options=default_schema.get('sort_by_options',[])),
                 "sort_order": st.column_config.SelectboxColumn("Sort Order", options=default_schema.get('sort_order_options',[])),
                 "stake_amount": st.column_config.NumberColumn("Stake Amount", min_value=0.00, max_value=1000, step=0.01, format="$ %.2f"),
-                
+                "active": st.column_config.CheckboxColumn("Active"),
+                "max_tips": st.column_config.NumberColumn("Max Tips", min_value=0, max_value=1000, step=1),
+                "tips_days_delta": st.column_config.NumberColumn("Tips Days Delta", min_value=-1000, max_value=1000, step=1),
+                "tips_filter": st.column_config.ListColumn("Tips Filter"),
+                "name": st.column_config.TextColumn("Name"),
                 
         }, column_order=('active', 'name', 'publish_type','tips_filter','language', 'channel', 'next_publish', 'max_tips', 'sort_by', 'sort_order', 'tips_days_delta','stake_amount'),
         key="platform_summary",

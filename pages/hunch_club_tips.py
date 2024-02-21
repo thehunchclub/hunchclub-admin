@@ -1,11 +1,12 @@
 import streamlit as st
-from core.utils import init, server_request, to_snake_case, create_form_element, process_form_submission, merge_dicts
-import requests
 from loguru import logger as log
 from datetime import datetime, timedelta
-from core.vars import DEBUG
-import pandas as pd
 from time import sleep
+
+from core.vars import DEBUG
+from core.utils import init, server_request, to_snake_case, create_form_element, process_form_submission, merge_dicts
+from schema.hunch_club import TipSchema
+
 
 @st.cache_resource(ttl=3600 if not DEBUG else 5)
 def get_tips():
@@ -16,8 +17,21 @@ def get_tips():
         res = server_request("hunch_club/tips/all")
         # print(res.status_code, res.json())
         if res.status_code == 200:
-            data = res.json()
-            return data.get('data', [])
+            data = res.json().get('data', [])
+            new_data = []
+            for tip in data:
+                # Reformat datetime 
+                try:
+                    tip['datetime'] = datetime.strptime(tip['datetime'], "%Y-%m-%d %H:%M:%S")
+
+                    # Change the format to "YYYY-MM-DD HH:MM"
+                    # tip['datetime'] = tip['datetime'].strftime("%Y-%m-%d, %H:%M")
+                except:
+                    pass
+                        
+                new_data.append(TipSchema(**tip).model_dump())
+                
+            return new_data
         else:
             st.error(f"Error fetching data: {res.status_code} {res.text}")
         
@@ -95,28 +109,16 @@ if __name__ == "__main__":
     else:
         # Sort tips by datetime in reverse order
         tips = sorted(tips, key=lambda x: x['datetime'], reverse=True)
-        # Drop columns: _id, language
-        for tip in tips:
-            # tip.pop('_id', None)
-            tip.pop('language', None)
-            # Reformat datetime 
-            try:
-                tip['datetime'] = datetime.strptime(tip['datetime'], "%Y-%m-%d %H:%M:%S")
-
-                # Change the format to "YYYY-MM-DD HH:MM"
-                tip['datetime'] = tip['datetime'].strftime("%Y-%m-%d, %H:%M")
-            except:
-                pass
-        
-        tomorrow = (datetime.utcnow() + timedelta(days=1)).strftime("%Y-%m-%d")
-        today = datetime.utcnow().strftime("%Y-%m-%d")
-        yesterday = (datetime.utcnow() - timedelta(days=1)).strftime("%Y-%m-%d")
         
         # TODO For Future Tips (today, tomorrow, future) - allow for deletion of tips (in case of duplicates)
+        _now = datetime.utcnow()
+        _tomorrow = _now + timedelta(days=1)
+        
         
         st.subheader("Future Tips", divider=True)
         # Filter all tips results before yesterday
-        future_tips = [tip for tip in tips if tip['datetime'] > tomorrow]
+        # tip['datetime'] is a datetime object. 
+        future_tips = [tip for tip in tips if tip['datetime'] > datetime(_tomorrow.year, _tomorrow.month, _tomorrow.day, hour=23, minute=59) ]
         st.data_editor(future_tips, key="edit_tips_future", use_container_width=True, column_config={
                 "_id" : None,
                 "datetime" : "Date",
@@ -136,10 +138,27 @@ if __name__ == "__main__":
         if edited_rows:
             if st.button("Save Changes", use_container_width=True, type="primary"):
                 update_tips(edited_rows, future_tips)
-                
+               
+        # Drop columns: _id, language
+        for tip in tips:
+            # tip.pop('_id', None)
+            # tip.pop('language', None)
+            # Reformat datetime 
+            try:
+                # tip['datetime'] = datetime.strptime(tip['datetime'], "%Y-%m-%d %H:%M:%S")
+
+                # Change the format to "YYYY-MM-DD HH:MM"
+                tip['datetime'] = tip['datetime'].strftime("%Y-%m-%d, %H:%M")
+            except:
+                pass
+        
+        tomorrow = (datetime.utcnow() + timedelta(days=1)).strftime("%Y-%m-%d")
+        today = datetime.utcnow().strftime("%Y-%m-%d")
+        yesterday = (datetime.utcnow() - timedelta(days=1)).strftime("%Y-%m-%d")
+ 
         # Tips for tomorrow only
         tomorrow_tips = [tip for tip in tips if tip['datetime'].startswith(tomorrow)]
-        st.subheader(f"Tomorrow's Tips ({len(tomorrow_tips)})", divider=True)
+        st.subheader(f"Tomorrow's Tips ({len(tomorrow_tips)}) - {tomorrow}", divider=True)
         st.data_editor(tomorrow_tips, key="edit_tips_tomorrow", use_container_width=True, column_config={
                 "_id" : None,
                 "datetime" : "Date",
@@ -164,7 +183,7 @@ if __name__ == "__main__":
         # Tips for today only
         todays_tips = [tip for tip in tips if tip['datetime'].startswith(today)]
         
-        st.subheader(f"Today's Tips ({len(todays_tips)})", divider=True)
+        st.subheader(f"Today's Tips ({len(todays_tips)}) - {today}", divider=True)
         st.data_editor(todays_tips, key="edit_tips_today", use_container_width=True, column_config={
                 "_id" : None,
                 "datetime" : "Date",
@@ -188,7 +207,7 @@ if __name__ == "__main__":
         # Tips for yesterday
         yesterdays_tips = [tip for tip in tips if tip['datetime'].startswith(yesterday)]
 
-        st.subheader(f"Yesterday's Tips ({len(yesterdays_tips)})", divider=True)
+        st.subheader(f"Yesterday's Tips ({len(yesterdays_tips)}) - {yesterday}", divider=True)
         st.data_editor(yesterdays_tips, key="edit_tips_yesterday", use_container_width=True, hide_index=True, disabled=("datetime", "participants","odds","selection","event_type","event_name"), column_config={
                     "_id" : None,
                     "description" : None,
