@@ -111,24 +111,27 @@ if __name__ == "__main__":
         tomorrow = (datetime.utcnow() + timedelta(days=1)).strftime("%Y-%m-%d")
         today = datetime.utcnow().strftime("%Y-%m-%d")
         yesterday = (datetime.utcnow() - timedelta(days=1)).strftime("%Y-%m-%d")
-
+        
+        # TODO For Future Tips (today, tomorrow, future) - allow for deletion of tips (in case of duplicates)
         
         st.subheader("Future Tips", divider=True)
         # Filter all tips results before yesterday
         future_tips = [tip for tip in tips if tip['datetime'] > tomorrow]
         st.data_editor(future_tips, key="edit_tips_future", use_container_width=True, column_config={
-            "_id" : None,
-            "datetime" : "Date",
-            "participants" : "Participants",
-            "event_name" : "Event Name",
-            "event_type" : "Event Type",
-            "selection" : "Selection",
-            "odds" : "Odds",
-            "event_result" : None,
-            "bet_result" : None,
-            "free_tips": st.column_config.CheckboxColumn(label="Free Tip"),
-            "premium_tip": st.column_config.CheckboxColumn(label="Premium Tip"),
-        }, disabled=("datetime", "participants","event_type"))
+                "_id" : None,
+                "datetime" : "Date",
+                "participants" : "Participants",
+                "event_name" : "Event Name",
+                "event_type" : "Event Type",
+                "selection" : "Selection",
+                "odds" : "Odds",
+                "event_result" : None,
+                "bet_result" : None,
+                "free_tips": st.column_config.CheckboxColumn(label="Free Tip"),
+                "premium_tip": st.column_config.CheckboxColumn(label="Premium Tip"),
+            }, disabled=("datetime", "participants","event_type"),
+            column_order=("datetime",  "event_type", "event_name", "participants",  "free_tips", "premium_tip", "event_result", "bet_result", "selection", "odds", "description")
+        )
         edited_rows = st.session_state.get("edit_tips_future", {}).get("edited_rows", {}) 
         if edited_rows:
             if st.button("Save Changes", use_container_width=True, type="primary"):
@@ -138,18 +141,20 @@ if __name__ == "__main__":
         tomorrow_tips = [tip for tip in tips if tip['datetime'].startswith(tomorrow)]
         st.subheader(f"Tomorrow's Tips ({len(tomorrow_tips)})", divider=True)
         st.data_editor(tomorrow_tips, key="edit_tips_tomorrow", use_container_width=True, column_config={
-            "_id" : None,
-            "datetime" : "Date",
-            "participants" : "Participants",
-            "event_name" : "Event Name",
-            "event_type" : "Event Type",
-            "selection" : "Selection",
-            "odds" : "Odds",
-            "event_result" : None,
-            "bet_result" : None,
-            "free_tips": st.column_config.CheckboxColumn(label="Free Tip"),
-            "premium_tip": st.column_config.CheckboxColumn(label="Premium Tip"),
-        }, disabled=("datetime", "participants","event_type"))
+                "_id" : None,
+                "datetime" : "Date",
+                "participants" : "Participants",
+                "event_name" : "Event Name",
+                "event_type" : "Event Type",
+                "selection" : "Selection",
+                "odds" : "Odds",
+                "event_result" : None,
+                "bet_result" : None,
+                "free_tips": st.column_config.CheckboxColumn(label="Free Tip"),
+                "premium_tip": st.column_config.CheckboxColumn(label="Premium Tip"),
+            }, disabled=("datetime", "participants","event_type"),
+            column_order=("datetime",  "event_type", "event_name", "participants",  "free_tips", "premium_tip", "event_result", "bet_result", "selection", "odds", "description")
+        )
         edited_rows = st.session_state.get("edit_tips_tomorrow", {}).get("edited_rows", {}) 
         if edited_rows:
             if st.button("Save Changes", use_container_width=True, type="primary"):
@@ -161,18 +166,20 @@ if __name__ == "__main__":
         
         st.subheader(f"Today's Tips ({len(todays_tips)})", divider=True)
         st.data_editor(todays_tips, key="edit_tips_today", use_container_width=True, column_config={
-            "_id" : None,
-            "datetime" : "Date",
-            "participants" : "Participants",
-            "event_name" : "Event Name",
-            "event_type" : "Event Type",
-            "selection" : "Selection",
-            "odds" : "Odds",
-            "event_result" : None,
-            "bet_result" : None,
-            "free_tips": st.column_config.CheckboxColumn(label="Free Tip"),
-            "premium_tip": st.column_config.CheckboxColumn(label="Premium Tip"),
-        }, disabled=("datetime", "participants","event_type"))
+                "_id" : None,
+                "datetime" : "Date",
+                "participants" : "Participants",
+                "event_name" : "Event Name",
+                "event_type" : "Event Type",
+                "selection" : "Selection",
+                "odds" : "Odds",
+                "event_result" : None,
+                "bet_result" : None,
+                "free_tips": st.column_config.CheckboxColumn(label="Free Tip"),
+                "premium_tip": st.column_config.CheckboxColumn(label="Premium Tip"),
+            }, disabled=("datetime", "participants","event_type"),
+            column_order=("datetime",  "event_type", "event_name", "participants",  "free_tips", "premium_tip", "event_result", "bet_result", "selection", "odds", "description")
+        )
         edited_rows = st.session_state.get("edit_tips_today", {}).get("edited_rows", {}) 
         if edited_rows:
             if st.button("Save Changes", use_container_width=True, type="primary"):
@@ -195,7 +202,7 @@ if __name__ == "__main__":
                     "bet_result" :st.column_config.SelectboxColumn(label="Bet Result", options=["Win", "Lose", "Void"]),
                     "free_tips": st.column_config.CheckboxColumn(label="Free Tip", disabled=True),
                     "premium_tip": st.column_config.CheckboxColumn(label="Premium Tip", disabled=True),
-                }
+                }, column_order=("datetime",  "event_type", "event_name", "participants",  "free_tips", "premium_tip", "event_result", "bet_result", "selection", "odds", "description")
         )
         edited_rows = st.session_state.get("edit_tips_yesterday", {}).get("edited_rows", {}) 
         if edited_rows:
@@ -210,7 +217,7 @@ if __name__ == "__main__":
         
         st.dataframe(previous_tips, use_container_width=True, column_config={
             "_id" : None
-        })
+        }, column_order=("datetime",  "event_type", "event_name", "participants",  "free_tips", "premium_tip", "event_result", "bet_result", "selection", "odds", "description"))
 
 
     # if DEBUG:

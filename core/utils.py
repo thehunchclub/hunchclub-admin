@@ -22,14 +22,14 @@ def ping_server():
     try:
         response = requests.get(SERVER_ADDRESS + "/common/ping")
         if response.status_code != 200:
-            raise Exception("Server not available")
+            raise Exception("Server not available at " + SERVER_ADDRESS)
         return True
     except Exception as e:
         log.error(e)
     return False
 
 def init():
-        
+    
     # Force remove default page navigation
     st.config.set_option('client.showSidebarNavigation', False)
     
@@ -47,7 +47,7 @@ def init():
         pass
         
     if not ping_server():
-        st.error("Server is Offline", icon="🚨")
+        st.error("Server is Offline at " + SERVER_ADDRESS, icon="🚨")
         ping_server.clear()
         st.stop()
     
@@ -60,7 +60,7 @@ def init():
     # If not authenticated, show login page
     if not super_admin_authenticated(): 
         # Show login page
-        st.success("Server is Online", icon="✅")
+        st.success("Server is Online at " + SERVER_ADDRESS, icon="✅")
         show_super_admin_login()
         st.stop()
 
@@ -294,8 +294,21 @@ def encode_datetimes_for_db(value):
         return value
 
 
-def create_form_element(form, label=None, value=None, key=None, help=None, disabled=False, use_columns=False, show_label=True, options=[], field=None):
-    
+def create_form_element(form, label=None, value=None, key=None, help=None, disabled=False, use_columns=False, show_label=True, options=[], field=None, use_expander=(False, False)):
+    """
+    Generates the Streamlit form element based on the type of value.
+        key: str = Starting key value for the form element. Format: "fieldname_id"
+        label: str = Label for the form element.
+        value: any = Value for the form element.
+        help: str = Help text for the form element.
+        disabled: bool = Whether the form element is disabled.
+        use_columns: bool = Whether to use columns to split the label and form element.
+        show_label: bool = Whether to show the label.
+        options: list = List of options for the select/multiselect elements.
+        field: str = Type of form element. Options: "password", "date", "time", "multiselect", "textarea"
+        use_expander: tuple = Whether to use an expander to hide the form element. Format: (use expander, start expanded)
+        
+    """
     # if 'time' in label: print(key, label,use_columns, show_label, type(value))
     
     _label_visibility = 'visible' if label else 'collapsed'
@@ -313,6 +326,8 @@ def create_form_element(form, label=None, value=None, key=None, help=None, disab
     #     value = [value]
     if disabled:
         key = random.randint(1,999999)
+    if isinstance(use_expander, bool) or len(use_expander) != 2:
+        use_expander = (use_expander, True)
         
     def col_split(label, value, key=None):
         c1, c2 = form.columns(2)
@@ -333,7 +348,11 @@ def create_form_element(form, label=None, value=None, key=None, help=None, disab
         if use_columns:
             col_split(label, value, key)
         else:
-            form.number_input(label, value=value, key=key, help=help, label_visibility=_label_visibility, disabled=disabled, min_value=0)
+            if isinstance(value, float):
+                form.number_input(label, value=value, key=key, help=help, label_visibility=_label_visibility, disabled=disabled)
+            else:
+                form.number_input(label, value=value, key=key, help=help, label_visibility=_label_visibility, disabled=disabled)
+                
     elif isinstance(value, datetime.datetime) or field == "date":
         if use_columns:
             col_split(label, value, key)
@@ -367,11 +386,13 @@ def create_form_element(form, label=None, value=None, key=None, help=None, disab
         # form.multiselect(label, value, key=key, help=help, label_visibility=_label_visibility)
     elif isinstance(value, dict):
         items = value.items() #sorted(value.items(), key=lambda x: x[0])
-        # TODO go through list and remove _help and _options and add them to the form correctly.
         
         form.subheader(label, divider=True, anchor=None)
         # c1, c2 = form.columns(2)
-        with form.container(border=True):
+        if help: form.caption(help)
+        _block = form.expander(f"Click here to open/close {label} options...", expanded=use_expander[1]) if use_expander[0] else form.container(border=True)
+        with _block:
+            # go through list and remove _help and _options and add them to the form correctly.
             for k,v in items: #value.items():
                 _help = None
                 _field = None

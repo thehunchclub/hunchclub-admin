@@ -166,6 +166,7 @@ aider.sh
 /config/config.py
 /static
 deploy.sh
+sync.sh
 core/ai_utils.py
 core/auth_manager.py
 core/db_manager.py
