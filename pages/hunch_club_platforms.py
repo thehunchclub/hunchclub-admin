@@ -229,7 +229,7 @@ if __name__ == "__main__":
     st.subheader("Quick Summary", divider=True)
     
     if st.session_state.get('platform_summary',None):
-        st.write(st.session_state.get('platform_summary',None))
+        # st.write(st.session_state.get('platform_summary',None))
         _changes = st.session_state.get('platform_summary',{})
         if st.button("Save Changes", use_container_width=True, type="primary"):
             st.info("Saving changes...")
