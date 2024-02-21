@@ -215,7 +215,7 @@ if __name__ == "__main__":
                     'id',
                 ]:
                 continue
-            _v = platform[k]
+            _v = platform.get(k, default_schema[k])
             if k == 'next_publish':
                 try:
                     _v = datetime.fromisoformat(_v).strftime("%B %d, %Y, %H:%M")
