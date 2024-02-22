@@ -47,7 +47,7 @@ def get_tips():
 
 def update_tips(edited_rows:dict, dataset:list):
     if edited_rows:
-        st.write(edited_rows)
+        # st.write(edited_rows)
         errors = []
         for index, row in edited_rows.items():
             # print(index, row, dataset[index])
