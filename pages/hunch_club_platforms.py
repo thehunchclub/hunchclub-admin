@@ -61,7 +61,7 @@ def to_delete(id):
 def to_update(id, data):
     try:
         # Catch publish_schedule and convert to cron format
-        print(id, data)
+        # print(id, data)
         _schedule = data.get("publish_schedule", "")
         _schedule = _schedule.split(":") if ":" in _schedule else None
         _schedule = f"{_schedule[1]} {_schedule[0]} * * *" if _schedule else data.get("publish_schedule", "")
@@ -81,7 +81,7 @@ def to_update(id, data):
 def to_create(data):
     try:
         # Catch publish_schedule and convert to cron format
-        print(data)
+        # print(data)
         _schedule = data.get("publish_schedule", "")
         _schedule = _schedule.split(":") if ":" in _schedule else None
         _schedule = f"{_schedule[1]} {_schedule[0]} * * *" if _schedule else data.get("publish_schedule", "")
@@ -171,7 +171,7 @@ if __name__ == "__main__":
         
         if action == 'test platform':
             # Send test
-            result = server_request("hunch_club/platform/test", method="POST", data=form_data)
+            result = server_request(f"hunch_club/platform/test/{id}", method="POST")
             if result.status_code != 200:
                 st.error(f"API returned status code {result.status_code}: {result.text}", icon="🚨")
                 log.error(f"API returned status code {result.status_code}: {result.text}")
@@ -238,7 +238,7 @@ if __name__ == "__main__":
                 # Delete
                 if _changes.get('deleted_rows',[]):
                     if i in _changes['deleted_rows']:
-                        print("DELETED",i,plat['id'])
+                        # print("DELETED",i,plat['id'])
                         if to_delete(plat['id']):
                             st.success(":white_check_mark: Platform Deleted")
                         else:
@@ -247,7 +247,7 @@ if __name__ == "__main__":
                 # Update
                 if _changes.get('edited_rows',{}):
                     if i in _changes['edited_rows'].keys():
-                        print("EDITED",i,plat['id'])
+                        # print("EDITED",i,plat['id'])
                         if to_update(plat['id'], _changes['edited_rows'][i]):
                             st.success(":white_check_mark: Platform Updated")
                         else:

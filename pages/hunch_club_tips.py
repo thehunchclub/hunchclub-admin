@@ -8,7 +8,7 @@ from core.vars import DEBUG
 from core.utils import init, server_request, to_snake_case, create_form_element, process_form_submission, merge_dicts
 from schema.hunch_club import TipSchema
 
-from rich import print
+# # from rich import print
 
 @st.cache_resource(ttl=3600 if not DEBUG else 5)
 def get_tips():
@@ -50,7 +50,7 @@ def update_tips(edited_rows:dict, dataset:list):
         st.write(edited_rows)
         errors = []
         for index, row in edited_rows.items():
-            print(index, row, dataset[index])
+            # print(index, row, dataset[index])
             try:
                 row_id = dataset[index]['id']
                 if update_tip(row_id, row):
