@@ -174,7 +174,7 @@ if __name__ == "__main__":
         # yesterday = (datetime.utcnow() - timedelta(days=1)).strftime("%Y-%m-%d")
 
         
-        print(datetime(tomorrow.year, tomorrow.month, tomorrow.day), today, yesterday)
+        # print(datetime(tomorrow.year, tomorrow.month, tomorrow.day), today, yesterday)
         
         # Tips for tomorrow only
         # tomorrow_tips = [tip for tip in tips if tip['datetime'].startswith(tomorrow)]
