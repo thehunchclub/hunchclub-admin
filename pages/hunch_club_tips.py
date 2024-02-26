@@ -142,6 +142,7 @@ if __name__ == "__main__":
                 "participants" : "Participants",
                 "event_name" : "Event Name",
                 "event_type" : "Event Type",
+                "market_type": "Market Type",
                 "selection" : "Selection",
                 "odds" : "Odds",
                 "event_result" : None,
@@ -149,7 +150,7 @@ if __name__ == "__main__":
                 "publish_free": st.column_config.CheckboxColumn(label="Free Tip"),
                 "publish_vip": st.column_config.CheckboxColumn(label="Premium Tip"),
             }, disabled=("datetime", "participants","event_type"),
-            column_order=("datetime",  "event_type", "event_name", "participants",  "publish_free", "publish_vip", "event_result", "bet_result", "selection", "odds", "description")
+            column_order=("datetime",  "event_type", "event_name", "participants",  "publish_free", "publish_vip", "event_result", "bet_result", "market_type", "selection", "odds", "description")
         )
         edited_rows = st.session_state.get("edit_tips_future", {}).get("edited_rows", {}) 
         if edited_rows:
@@ -186,6 +187,7 @@ if __name__ == "__main__":
                 "participants" : "Participants",
                 "event_name" : "Event Name",
                 "event_type" : "Event Type",
+                "market_type": "Market Type",
                 "selection" : "Selection",
                 "odds" : "Odds",
                 "event_result" : None,
@@ -193,7 +195,7 @@ if __name__ == "__main__":
                 "publish_free": st.column_config.CheckboxColumn(label="Free Tip"),
                 "publish_vip": st.column_config.CheckboxColumn(label="Premium Tip"),
             }, disabled=("datetime", "participants","event_type"),
-            column_order=("datetime",  "event_type", "event_name", "participants",  "publish_free", "publish_vip", "event_result", "bet_result", "selection", "odds", "description")
+            column_order=("datetime",  "event_type", "event_name", "participants",  "publish_free", "publish_vip", "event_result", "bet_result", "market_type", "selection", "odds", "description")
         )
         edited_rows = st.session_state.get("edit_tips_tomorrow", {}).get("edited_rows", {}) 
         if edited_rows:
@@ -204,7 +206,7 @@ if __name__ == "__main__":
         # Tips for today only
         # todays_tips = [tip for tip in tips if tip['datetime'].startswith(today)]
         todays_tips = [tip for tip in tips if datetime(tip['datetime'].year, tip['datetime'].month,tip['datetime'].day) == today]
-        
+
         st.subheader(f"Today's Tips ({len(todays_tips)}) - {today.strftime('%Y.%m.%d')}", divider=True)
         st.data_editor(todays_tips, key="edit_tips_today", use_container_width=True, column_config={
                 "_id" : None,
@@ -212,6 +214,7 @@ if __name__ == "__main__":
                 "participants" : "Participants",
                 "event_name" : "Event Name",
                 "event_type" : "Event Type",
+                "market_type": "Market Type",
                 "selection" : "Selection",
                 "odds" : "Odds",
                 "event_result" : None,
@@ -219,7 +222,7 @@ if __name__ == "__main__":
                 "publish_free": st.column_config.CheckboxColumn(label="Free Tip"),
                 "publish_vip": st.column_config.CheckboxColumn(label="Premium Tip"),
             }, disabled=("datetime", "participants","event_type"),
-            column_order=("datetime",  "event_type", "event_name", "participants",  "publish_free", "publish_vip", "event_result", "bet_result", "selection", "odds", "description")
+            column_order=("datetime",  "event_type", "event_name", "participants",  "publish_free", "publish_vip", "event_result", "bet_result", "market_type", "selection", "odds", "description")
         )
         edited_rows = st.session_state.get("edit_tips_today", {}).get("edited_rows", {}) 
         if edited_rows:
@@ -238,13 +241,14 @@ if __name__ == "__main__":
                     "participants" : "Participants",
                     "event_name" : "Event Name",
                     "event_type" : "Event Type",
+                    "market_type": "Market Type",
                     "selection" : "Selection",
                     "odds" : "Odds",
                     "event_result" : "Event Result",
                     "bet_result" :st.column_config.SelectboxColumn(label="Bet Result", options=["Win", "Lose", "Void"]),
                     "publish_free": st.column_config.CheckboxColumn(label="Free Tip", disabled=True),
                     "publish_vip": st.column_config.CheckboxColumn(label="Premium Tip", disabled=True),
-                }, column_order=("datetime",  "event_type", "event_name", "participants",  "publish_free", "publish_vip", "event_result", "bet_result", "selection", "odds", "description")
+                }, column_order=("datetime",  "event_type", "event_name", "participants",  "publish_free", "publish_vip", "event_result", "bet_result", "market_type", "selection", "odds", "description")
         )
         edited_rows = st.session_state.get("edit_tips_yesterday", {}).get("edited_rows", {}) 
         if edited_rows:
@@ -261,7 +265,7 @@ if __name__ == "__main__":
             "_id" : None,
             "datetime" : st.column_config.DatetimeColumn(label="Date", format="YYYY.MM.DD, HH:mm"),
 
-        }, column_order=("datetime",  "event_type", "event_name", "participants",  "publish_free", "publish_vip", "event_result", "bet_result", "selection", "odds", "description"))
+        }, column_order=("datetime",  "event_type", "event_name", "participants",  "publish_free", "publish_vip", "event_result", "bet_result", "market_type", "selection", "odds", "description"))
 
 
     # if DEBUG:

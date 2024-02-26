@@ -2,7 +2,7 @@ import streamlit as st
 import requests
 from loguru import logger as log
 from time import sleep
-from datetime import datetime
+from datetime import datetime, time
 from core.utils import init, server_request, to_snake_case, create_form_element, process_form_submission, merge_dicts, recursive_walk, encode_datetimes_for_db, filter_dict
 from core.vars import DEBUG
 
@@ -61,13 +61,14 @@ def to_delete(id):
 def to_update(id, data):
     try:
         # Catch publish_schedule and convert to cron format
-        # print(id, data)
+        print(id, type(data), data)
         _schedule = data.get("publish_schedule", "")
         _schedule = _schedule.split(":") if ":" in _schedule else None
         _schedule = f"{_schedule[1]} {_schedule[0]} * * *" if _schedule else data.get("publish_schedule", "")
         if 'publish_schedule' in data: data['publish_schedule'] = _schedule
         # if 'next_publish' in data: # Remove this as it is defined on the server
         #     del data['next_publish']
+        # print(id, data)
         results = server_request(f"hunch_club/platform/{id}", method="PATCH", data=data)
         # print("UPDATE QUERY", results.text)  
         if not results.status_code == 200:
@@ -189,6 +190,8 @@ if __name__ == "__main__":
         get_platforms.clear()    
     
     _quick_summary = []
+    # print(len(platforms))
+    
     # drop columns
     for platform in platforms:
         _plat = {}
@@ -197,25 +200,35 @@ if __name__ == "__main__":
             # print(k)
             # if k not in default_schema.keys():
             #     continue
-            if k not in [
-                    'language', 
-                    'name', 
-                    'channel', 
-                    'active', 
-                    'max_tips', 
-                    'sort_by', 
-                    'sort_order', 
-                    'date_format', 
-                    'use_icons', 
-                    'next_publish',
-                    'tips_filter',
-                    'publish_type',
-                    'tips_days_delta',
-                    'stake_amount',
-                    'id',
-                ]:
-                continue
+            # if k not in [
+            #         'language', 
+            #         'name', 
+            #         'channel', 
+            #         'active', 
+            #         'max_tips', 
+            #         'sort_by', 
+            #         'sort_order', 
+            #         'date_format', 
+            #         'use_icons', 
+            #         'next_publish',
+            #         'tips_filter',
+            #         'publish_type',
+            #         'tips_days_delta',
+            #         'stake_amount',
+            #         'id',
+            #     ]:
+            #     continue
+            
+            # Override publish_schedule to be a time field for the UI, convert it back before saving it.
             _v = platform.get(k, default_schema[k])
+            if k == "publish_schedule":
+                print(_v)
+                if not _v or _v == "None":
+                    _v = "30 8 * * *" # Default to 8:30am
+                time_value = _v.split(" ")
+                # time_value = f"{time_value[1]}:{time_value[0]}"
+                time_value = time( int(time_value[1]),  int(time_value[0]) )
+                _v = time_value
             if k == 'next_publish':
                 try:
                     _v = datetime.fromisoformat(_v).strftime("%B %d, %Y, %H:%M")
@@ -266,21 +279,30 @@ if __name__ == "__main__":
                     max_chars=50,
                 ),
                 "publish_type": st.column_config.SelectboxColumn("Publish Type", options=default_schema.get('publish_type_options',[])),
+                "publish_schedule": st.column_config.TimeColumn("Publish Schedule", format="HH:mm"),
                 "language": st.column_config.SelectboxColumn("Language", options=default_schema.get('language_options',[])),
                 "channel": st.column_config.SelectboxColumn("Channel", options=default_schema.get('channel_options',[])),
                 "sort_by": st.column_config.SelectboxColumn("Sort by", options=default_schema.get('sort_by_options',[])),
                 "sort_order": st.column_config.SelectboxColumn("Sort Order", options=default_schema.get('sort_order_options',[])),
+                "group_by": st.column_config.SelectboxColumn("Group by", options=default_schema.get('group_by_options',[])),
                 "stake_amount": st.column_config.NumberColumn("Stake Amount", min_value=0.00, max_value=1000, step=0.01, format="$ %.2f"),
                 "active": st.column_config.CheckboxColumn("Active"),
+                "publish_if_no_tips": st.column_config.CheckboxColumn("Publish Null Tips"),
+                "use_icons": st.column_config.CheckboxColumn("Use Icons"),
                 "max_tips": st.column_config.NumberColumn("Max Tips", min_value=0, max_value=1000, step=1),
                 "tips_days_delta": st.column_config.NumberColumn("Tips Days Delta", min_value=-1000, max_value=1000, step=1),
                 "tips_filter": st.column_config.ListColumn("Tips Filter"),
                 "name": st.column_config.TextColumn("Name"),
+                "no_tips_message": st.column_config.TextColumn("No Tips Message"),
+                "tips_format": st.column_config.TextColumn("Tips Format"),
+                "tips_message": st.column_config.TextColumn("Tips Message"),
+                "tips_photo": st.column_config.TextColumn("Tips Photo"),
+                "platform": st.column_config.TextColumn("Platform"),
                 
-        }, column_order=('active', 'name', 'publish_type','tips_filter','language', 'channel', 'next_publish', 'max_tips', 'sort_by', 'sort_order', 'tips_days_delta','stake_amount'),
+        }, column_order=('active', 'name', 'publish_type','tips_filter','language', 'channel', 'next_publish','publish_schedule', 'max_tips', 'sort_by', 'sort_order', 'group_by', 'tips_days_delta','stake_amount','use_icons','publish_if_no_tips','no_tips_message','tips_format','tips_message','tips_photo','platform'),
         key="platform_summary",
         num_rows='dynamic',
-        disabled=('tips_filter','next_publish')
+        disabled=('tips_filter','next_publish','platform')
     )
     
     
@@ -376,10 +398,10 @@ if __name__ == "__main__":
                     # Override publish_schedule to be a time field for the UI, convert it back before saving it.
                     if k == "publish_schedule":
                         # print(value)
-                        if not value or value == "None":
-                            value = "30 8 * * *" # Default to 8:30am
-                        time_value = value.split(" ")
-                        time_value = f"{time_value[1]}:{time_value[0]}"
+                        # if not value or value == "None":
+                        #     value = "30 8 * * *" # Default to 8:30am
+                        # time_value = value.split(" ")
+                        # time_value = f"{time_value[1]}:{time_value[0]}"
                         create_form_element(st, k, value=time_value, key = k+"_"+str(platform['id']), help = _help, use_columns=True, options = _options, field="time", disabled=_disabled)
                         
                     # elif k == "platform" or k == "icons":
